@@ -5,12 +5,153 @@ import { sidebarSections, sidebarItemPaths } from "../data";
 export function AdminLayout() {
   const [adminSearch, setAdminSearch] = useState("");
   const [showAdminSearch, setShowAdminSearch] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         .sidebar-link:hover { background: #f5f5f5 !important; }
+
+        /* Responsive Styles */
+        .sidebar {
+          width: 200px;
+          min-width: 200px;
+          border-right: 1px solid #eee;
+          padding: 16px 0;
+          overflow-y: auto;
+          background: #fff;
+          transition: transform 0.3s ease;
+        }
+
+        .main-content {
+          flex: 1;
+          padding: 24px 32px;
+          overflow-y: auto;
+        }
+
+        .search-input {
+          padding: 7px 14px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 13px;
+          width: 220px;
+          outline: none;
+        }
+
+        .top-bar-actions {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .header-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 24px;
+          border-bottom: 1px solid #eee;
+          background: #fff;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-btn {
+            padding: 7px 20px;
+            background: #1a56db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .hide-mobile {
+            display: inline-block;
+        }
+
+        .hamburger-btn {
+          display: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 20px;
+          padding: 0;
+          margin-right: 8px;
+        }
+
+        .overlay {
+          display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 16px;
+            }
+
+            .header-left {
+                gap: 8px;
+            }
+            
+            .sidebar {
+                position: fixed;
+                top: 52px;
+                left: 0;
+                bottom: 0;
+                z-index: 1000;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .hamburger-btn {
+                display: block;
+            }
+
+            .overlay.visible {
+                display: block;
+                position: fixed;
+                top: 52px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .search-input {
+                width: 140px;
+            }
+
+            .search-btn {
+                display: none;
+            }
+
+            .hide-mobile {
+                display: none;
+            }
+
+            table {
+              display: block;
+              overflow-x: auto;
+              white-space: nowrap;
+            }
+        }
       `}</style>
       <div
         style={{
@@ -20,20 +161,14 @@ export function AdminLayout() {
         }}
       >
         {/* Top Bar */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "12px 24px",
-            borderBottom: "1px solid #eee",
-            background: "#fff",
-            position: "sticky",
-            top: 0,
-            zIndex: 100,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+        <div className="header-container">
+          <div className="header-left">
+            <button
+              className="hamburger-btn"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              ☰
+            </button>
             <span
               style={{
                 fontSize: 26,
@@ -45,7 +180,7 @@ export function AdminLayout() {
               OMISE
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div className="top-bar-actions">
             <div style={{ position: "relative" }}>
               <input
                 value={adminSearch}
@@ -53,14 +188,7 @@ export function AdminLayout() {
                 onFocus={() => setShowAdminSearch(true)}
                 onBlur={() => setTimeout(() => setShowAdminSearch(false), 200)}
                 placeholder="Admin Charges Search"
-                style={{
-                  padding: "7px 14px",
-                  border: "1px solid #ddd",
-                  borderRadius: 4,
-                  fontSize: 13,
-                  width: 220,
-                  outline: "none",
-                }}
+                className="search-input"
               />
               {showAdminSearch && adminSearch && (
                 <div
@@ -82,41 +210,31 @@ export function AdminLayout() {
                 </div>
               )}
             </div>
-            <button
-              style={{
-                padding: "7px 20px",
-                background: "#1a56db",
-                color: "#fff",
-                border: "none",
-                borderRadius: 4,
-                fontSize: 13,
-                cursor: "pointer",
-                fontWeight: 500,
-              }}
+            <button className="search-btn">Search</button>
+            <span
+              style={{ color: "#555", fontSize: 13, cursor: "pointer" }}
+              className="hide-mobile"
             >
-              Search
-            </button>
-            <span style={{ color: "#555", fontSize: 13, cursor: "pointer" }}>
               Exports
             </span>
-            <span style={{ color: "#555", fontSize: 13 }}>
+            <span
+              style={{ color: "#555", fontSize: 13 }}
+              className="hide-mobile"
+            >
               jakrapan@omise.co
             </span>
           </div>
         </div>
 
         <div style={{ display: "flex", minHeight: "calc(100vh - 52px)" }}>
-          {/* Sidebar */}
+          {/* Overlay */}
           <div
-            style={{
-              width: 200,
-              minWidth: 200,
-              borderRight: "1px solid #eee",
-              padding: "16px 0",
-              overflowY: "auto",
-              background: "#fff",
-            }}
-          >
+            className={`overlay ${isSidebarOpen ? "visible" : ""}`}
+            onClick={() => setIsSidebarOpen(false)}
+          />
+
+          {/* Sidebar */}
+          <div className={`sidebar ${isSidebarOpen ? "mobile-open" : ""}`}>
             <div
               style={{
                 padding: "8px 20px",
@@ -170,7 +288,7 @@ export function AdminLayout() {
           </div>
 
           {/* Main Content */}
-          <div style={{ flex: 1, padding: "24px 32px", overflowY: "auto" }}>
+          <div className="main-content">
             <Outlet />
           </div>
         </div>
